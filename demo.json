@@ -1,0 +1,18 @@
+{
+  "project": {
+    "name": "mammdoo",
+    "namespace": "prometheus",
+    "state": "present"
+  },
+  
+  "component": {
+    "prometheus": {
+      "storageClass": "standard",
+      "capacity": "2Gi"
+    },
+    "alertmanager": {
+      "storageClass": "standard",
+      "capacity": "1Gi"
+    }
+  }
+}

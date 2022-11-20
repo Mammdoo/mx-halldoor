@@ -1,0 +1,5 @@
+---
+- hosts: prometheus
+  gather_facts: false
+  roles:
+  - prometheus
