@@ -1,0 +1,9 @@
+---
+- name: prometheus | namespace | create
+  k8s:
+    kubeconfig: "{{ kubeconfig }}"
+    state: "{{ project.state }}"
+    definition: "{{ lookup('template', 'namespace.yml.j2') }}"
+  tags:
+  - prometheus
+  - prometheus_namespace

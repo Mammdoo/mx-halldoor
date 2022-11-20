@@ -1,0 +1,12 @@
+---
+- import_tasks: prepare.yml
+
+- import_tasks: rbac.yml
+
+- import_tasks: config.yml
+
+- import_tasks: svc.yml
+
+- import_tasks: exporter.yml
+
+- import_tasks: operator.yml
