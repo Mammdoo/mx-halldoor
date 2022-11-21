@@ -1,0 +1,7 @@
+ComponentMeta:
+  prometheus:
+    name: prometheus
+    port: 9090
+  alertmanager:
+    name: alertmanager
+    port: 9093

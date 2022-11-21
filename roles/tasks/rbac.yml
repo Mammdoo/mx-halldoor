@@ -1,0 +1,30 @@
+---
+- name: prometheus | rbac | role
+  k8s:
+    kubeconfig: "{{ kubeconfig }}"
+    state: "{{ project.state }}"
+    definition: "{{ lookup('template', 'role.yml.j2') }}"
+  tags:
+  - prometheus
+  - prometheus_rbac
+  - prometheus_rbac_role
+
+- name: prometheus | rbac | serviceaccount
+  k8s:
+    kubeconfig: "{{ kubeconfig }}"
+    state: "{{ project.state }}"
+    definition: "{{ lookup('template', 'serviceaccount.yml.j2') }}"
+  tags:
+  - prometheus
+  - prometheus_rbac
+  - prometheus_rbac_serviceaccount
+
+- name: prometheus | rbac | rolebinding
+  k8s:
+    kubeconfig: "{{ kubeconfig }}"
+    state: "{{ project.state }}"
+    definition: "{{ lookup('template', 'rolebinding.yml.j2') }}"
+  tags:
+  - prometheus
+  - prometheus_rbac
+  - prometheus_rbac_rolebinding
