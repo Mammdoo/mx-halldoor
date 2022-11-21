@@ -1,0 +1,9 @@
+---
+- name: prometheus | secret | create
+  k8s:
+    kubeconfig: "{{ kubeconfig }}"
+    state: "{{ project.state }}"
+    definition: "{{ lookup('template', 'secret.yml.j2') }}"
+  tags:
+  - prometheus
+  - prometheus_secret
