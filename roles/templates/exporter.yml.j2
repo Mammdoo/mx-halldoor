@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "{{ project.name }}-{{ ComponentMeta[item.key].name }}"
+  namespace: "{{ project.namespace }}"
+  labels:
+    app: "{{ ComponentMeta[item.key].name }}"
+    {{ ComponentMeta[item.key].name }}: "{{ project.name }}"
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: "{{ ComponentMeta[item.key].name }}"
+      {{ ComponentMeta[item.key].name }}: "{{ project.name }}"
+  template:
+    metadata:
+      labels:
+        app: "{{ ComponentMeta[item.key].name }}"
+        {{ ComponentMeta[item.key].name }}: "{{ project.name }}"
+    spec:
+{% block securityContext %}{% endblock %}
+      terminationGracePeriodSeconds: 60
+      containers:
+        - name: "{{ ComponentMeta[item.key].name }}"
+          image: "{{ ComponentMeta[item.key].image }}:{{ ComponentMeta[item.key].tag }}"
+          imagePullPolicy: "IfNotPresent"
+{% block podSecurityContext %}{% endblock %}
+          env:
+{% block env %}{% endblock %}
+          ports:
+            - containerPort: {{ ComponentMeta[item.key].port }}
+              name: metrics
+              protocol: TCP
+          resources:
+{% block quota %}
+{% endblock %}
+          startupProbe:
+            failureThreshold: 5
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            tcpSocket:
+              port: metrics
+          livenessProbe:
+            failureThreshold: 5
+            initialDelaySeconds: 15
+            periodSeconds: 30
+            tcpSocket:
+              port: metrics
+          readinessProbe:
+            failureThreshold: 5
+            initialDelaySeconds: 15
+            periodSeconds: 30
+            tcpSocket:
+              port: metrics

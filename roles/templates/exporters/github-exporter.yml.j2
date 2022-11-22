@@ -1,0 +1,29 @@
+{% extends "exporter.yml.j2" %}
+
+{% if monitor.github.quota is defined %}
+{% set quota_cpu = monitor.github.quota.cpu %}
+{% set quota_mem = monitor.github.quota.mem %}
+{% else %}
+{% set quota_cpu = "50m" %}
+{% set quota_mem = "50Mi" %}
+{% endif %}
+
+{% block env %}
+            - name: ORGS
+              value: "{{ monitor.github.orgs | default('') }}"
+            - name: USERS
+              value: "{{ monitor.github.users | default('') }}"
+            - name: REPOS
+              value: "{{ monitor.github.repos | default('') }}"
+            - name: GITHUB_TOKEN
+              value: "{{ monitor.github.token | default('') }}"
+{% endblock %}
+
+{% block quota %}
+            limits:
+              cpu: "{{ quota_cpu }}"
+              memory: "{{ quota_mem }}"
+            requests:
+              cpu: "{{ quota_cpu }}"
+              memory: "{{ quota_mem }}"
+{% endblock %}

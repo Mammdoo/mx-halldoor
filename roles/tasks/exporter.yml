@@ -1,0 +1,11 @@
+---
+- name: prometheus | exporter | deploy
+  k8s:
+    kubeconfig: "{{ kubeconfig }}"
+    state: "{{ project.state }}"
+    definition: "{{ lookup('template', 'exporters/{{ ComponentMeta[item.key].name }}.yml.j2') }}"
+  with_dict: "{{ monitor }}"
+  tags:
+  - prometheus
+  - prometheus_exporter
+  - prometheus_exporter_deploy
