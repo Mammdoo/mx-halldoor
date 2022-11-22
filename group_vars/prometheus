@@ -5,3 +5,8 @@ ComponentMeta:
   alertmanager:
     name: alertmanager
     port: 9093
+  github:
+    name: github-exporter
+    image: githubexporter/github-exporter
+    tag: latest
+    port: 9171  

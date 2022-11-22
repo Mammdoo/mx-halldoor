@@ -1,0 +1,11 @@
+---
+- name: prometheus | svc | exporter
+  k8s:
+    kubeconfig: "{{ kubeconfig }}"
+    state: "{{ project.state }}"
+    definition: "{{ lookup('template', 'svc.yml.j2') }}"
+  with_items: "{{ monitor | dict2items | json_query('[].key') }}"
+  tags:
+  - prometheus
+  - prometheus_svc
+  - prometheus_svc_exporter

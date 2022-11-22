@@ -5,6 +5,13 @@
     "state": "present"
   },
   
+  "monitor": {
+    "github": {
+      "orgs": "mammdoo",
+      "users": "SingleCorner"
+    }
+  },
+
   "component": {
     "prometheus": {
       "storageClass": "standard",
