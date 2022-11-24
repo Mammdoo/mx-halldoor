@@ -1,0 +1,30 @@
+---
+- name: prometheus | alertmanager | config
+  k8s:
+    kubeconfig: "{{ kubeconfig }}"
+    state: present
+    definition: "{{ lookup('template', 'alertmanagerConfig.yml.j2') }}"
+  tags:
+    - prometheus
+    - prometheus_alertmanager
+    - prometheus_alertmanager_config
+
+- name: prometheus | alertmanager | deploy
+  k8s:
+    kubeconfig: "{{ kubeconfig }}"
+    state: present
+    definition: "{{ lookup('template', 'alertmanager.yml.j2') }}"
+  tags:
+  - prometheus
+  - prometheus_alertmanager
+  - prometheus_alertmanager_deploy
+
+- name: prometheus | prometheus | deploy
+  k8s:
+    kubeconfig: "{{ kubeconfig }}"
+    state: present
+    definition: "{{ lookup('template', 'prometheus.yml.j2') }}"
+  tags:
+  - prometheus
+  - prometheus_prometheus
+  - prometheus_prometheus_deploy

@@ -1,0 +1,39 @@
+apiVersion: monitoring.coreos.com/v1alpha1
+kind: AlertmanagerConfig
+metadata:
+  name: "{{ project.name }}-default"
+  namespace: "{{ project.namespace }}"
+  labels:
+    alertmanager: "{{ project.name }}"
+spec:
+  route:
+    groupBy:
+    - alertname
+    - severity
+    - instance
+    groupWait: 10s
+    groupInterval: 10s
+    repeatInterval: 24h
+    receiver: default
+    continue: false
+  inhibitRules:
+  - targetMatch:
+    - name: severity
+      value: Warning
+    sourceMatch:
+    - name: severity
+      value: High
+    equal:
+    - instance
+    - alert_type
+  receivers:
+  - name: default
+{% if channel.slack is defined %}
+    slackConfigs:
+    - apiURL:
+        name: "{{ project.name }}"
+        key: slack.url
+      channel: {{ channel.slack.channel }}
+      sendResolved: true
+      text: {% raw %}'{{ template "slack.default.text" . }}'{% endraw %} 
+{% endif %}

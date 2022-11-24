@@ -1,0 +1,58 @@
+apiVersion: monitoring.coreos.com/v1
+kind: Alertmanager
+metadata:
+  name: "{{ project.name }}"
+  namespace: "{{ project.namespace }}"
+spec:
+  alertmanagerConfigSelector:
+    matchLabels:
+      alertmanager: "{{ project.name }}"
+  replicas: 1
+{% if component.alertmanager is defined %}
+  storage:
+    volumeClaimTemplate:
+      spec:
+        accessModes:
+        - ReadWriteOnce
+        resources:
+          requests:
+            storage: {{ component.alertmanager.capacity }}
+        storageClassName: {{ component.alertmanager.storageClass }}
+{% endif %}
+  securityContext:
+    fsGroup: 2000
+    runAsGroup: 2000
+    runAsNonRoot: true
+    runAsUser: 1000
+    seccompProfile:
+      type: RuntimeDefault
+  alertmanagerConfiguration:
+    name: "{{ project.name }}-default"
+    global:
+      resolveTimeout: 30m
+{% if channel.slack is defined %}
+      slackApiUrl:
+        name: {{ project.name }}
+        key: slack.url
+{% endif %}
+{% if channel.smtp is defined %}
+      smtp:
+        from: "{{ channel.smtp.from }}"
+        smartHost:
+          host: "{{ channel.smtp.host }}"
+          port: "{{ channel.smtp.port }}"
+        authUsername: "{{ channel.smtp.user }}"
+        authPassword:
+          name: {{ project.name }}
+          key: smtp.pass
+        requireTLS: {% if channel.smtp.tls is defined %}{{ channel.smtp.tls }}{% else %}false{% endif %} 
+{% endif %}
+    templates:
+    - configMap:
+        name: {{ project.name }}-templates
+        key: common.tmpl
+{% if channel.slack is defined %}
+    - configMap:
+        name: {{ project.name }}-templates
+        key: slack.tmpl
+{% endif %}

@@ -1,0 +1,292 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ project.name }}-templates
+  namespace: {{ project.namespace }}
+data:
+  common.tmpl: |-
+{%- raw %}
+    {{ define "Status" }}
+    {{- if eq .Status "firing" }}
+    触发告警
+    {{- end }}
+    {{- if eq .Status "resolved" }}
+    解除告警
+    {{- end }}
+    {{ end }}
+{% endraw %}
+    {{ '{{- define "titlePrefix" }}' }}{{ channel.titlePrefix | default("【Mammdoo告警平台】") }}{{ '{{ end }}' }}
+
+  email.tmpl: |-
+{%- raw %}
+    {{ define "email.default.subject" }}{{ template "subjectPrefix" . }} - {{ template "Status" . }} - 环境{{ .CommonLabels.environment }} - 应用{{ .CommonLabels.application }} - 实例{{ .CommonLabels.instance }}{{ end }}
+  
+    {{ define "email_to" }}
+{% endraw %}
+    {{ '{{- $defaultGroup := "' }}{{ group.default | map(attribute='email') | join(',') }}{{ '" }}' }}
+{%- raw %}
+    {{- $mailist := "" }}
+    {{- if .CommonLabels.cgid }}
+{% endraw %}
+{% if group.customize is defined %}
+{% for i in group.customize %}
+      {{ '{{- if eq .CommonLabels.cgid' }} "{{ i.id }}" {{ '}}' }}
+      {{ '{{- $mailist = "' }}{{ i.member | join(', ') }}{{ '" }}' }}
+      {{ '{{- end }}' }}
+{% endfor %}
+{%- endif %}
+    {{ '{{- else }}' }}
+{% for i in group.application %}
+      {{ '{{- if eq .CommonLabels.application' }} "{{ i.id }}" {{ '}}' }}
+      {{ '{{- $mailist = "' }}{{ i.owner }}{% if i.member is defined %},{{ i.member | join(', ') }}{% endif %}{{ '" }}' }}
+      {{ '{{- end }}' }}
+{% endfor %}
+    {{ '{{- end }}' }}
+
+{%- raw %}
+    {{- if $mailist }}
+    {{- printf "%s,%s" $mailist $defaultGroup }}
+    {{- else }}
+    {{- $defaultGroup }}
+    {{- end }}
+    {{- end }}
+
+    {{ define "email_message" }}
+    <html>
+    <head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"> </haed>
+      <body style="margin: 30px; padding: 0;">
+        <div align="left">
+    {{- if .Alerts.Firing }}
+          <p style="font-family:微软雅黑">Dear customer, Happy New Year,</p>
+          <p style="font-family:微软雅黑">我们从监控系统中探测到了云服务存在异常，请关注此异常并定位问题，如果此告警为非期待的告警，请联系云团队进行调整，谢谢</p>
+    {{- range .Alerts }}
+          <table border="1" style="border:5px solid #F2F2F2;" cellspacing="4" cellpadding="3" width="650" style="table-layout:fixed">
+            <tr> 
+              <th align="left"><b>Alarm item</b></marquee></th> 
+              <th align="left"><b>Content information</b></marquee></th> 
+            </tr>
+            {{- if .Labels.subscriptionName }}
+            <tr>
+            <td align="left" style="font-family:微软雅黑;width: 20%" style="WORD-WRAP:break-word">订阅名 / Subscription</td>
+            <td align="left" style="font-family:微软雅黑;width: 80%" style="WORD-WRAP:break-word">{{ .Labels.subscriptionName }}</td>
+            </tr>
+            {{- end }}
+            {{- if .Labels.resourceGroup }}
+            <tr>
+            <td align="left" style="font-family:微软雅黑;width: 20%" style="WORD-WRAP:break-word">资源组 / ResourceGroup</td>
+            <td align="left" style="font-family:微软雅黑;width: 80%" style="WORD-WRAP:break-word">{{ .Labels.resourceGroup }}</td>
+            </tr>
+            {{- end }}
+            {{- if .Labels.resourceType }}
+            <tr>
+            <td align="left" style="font-family:微软雅黑;width: 20%" style="WORD-WRAP:break-word">资源类型 / ResourceType</td>
+            <td align="left" style="font-family:微软雅黑;width: 80%" style="WORD-WRAP:break-word">{{ .Labels.resourceType }}</td>
+            </tr>
+            {{- end }}
+            {{- if .Labels.application }}
+            <tr>
+            <td align="left" style="font-family:微软雅黑; width: 20%" style="WORD-WRAP:break-word">应用ID / ApplicationID</td>
+            <td align="left" style="font-family:微软雅黑;width: 80%" style="WORD-WRAP:break-word">{{ .Labels.application }}</td>
+            </tr>
+            {{- end }}
+            {{- if .Labels.environment }}
+            <tr>
+            <td align="left" style="font-family:微软雅黑; width: 20%" style="WORD-WRAP:break-word">环境 / Env</td>
+            <td align="left" style="font-family:微软雅黑;width: 80%" style="WORD-WRAP:break-word">{{ .Labels.environment }}</td>
+            </tr>
+            {{- end }}
+            {{- if .Labels.instance }}
+            <tr>
+            <td align="left" style="font-family:微软雅黑;width: 20%" style="WORD-WRAP:break-word">资源实例名 / Instance</td>
+            <td align="left" style="font-family:微软雅黑;width: 80%" style="WORD-WRAP:break-word">{{ .Labels.instance }}</td>
+            </tr>
+            {{- end }}
+            {{- if .Labels.instance_ip }}
+            <tr>
+            <td align="left" style="font-family:微软雅黑;width: 20%" style="WORD-WRAP:break-word">资源IP / IP</td>
+            <td align="left" style="font-family:微软雅黑;width: 80%" style="WORD-WRAP:break-word">{{ .Labels.instance_ip }}</td>
+            </tr>
+            {{- end }}
+            <tr>
+            <td align="left" style="font-family:微软雅黑;width: 20%" style="WORD-WRAP:break-word">告警严重性 / Severity</td>
+            {{- if eq .Labels.severity "Warning" -}}
+            <td align="left" bgcolor="#ffcc33" style="font-family:微软雅黑;width: 80%" style="WORD-WRAP:break-word">{{ .Labels.severity }}</td>
+            {{- end }}
+            {{- if eq .Labels.severity "High" -}}
+            <td align="left" bgcolor="#ff6348" style="font-family:微软雅黑;width: 80%" style="WORD-WRAP:break-word">{{ .Labels.severity }}</td>
+            {{- end }}
+            </tr>
+            <tr>
+            <td align="left" style="font-family:微软雅黑;width: 20%" style="WORD-WRAP:break-word">首次告警时间 / First Occur</td>
+            <td align="left" style="font-family:微软雅黑;width: 80%" style="WORD-WRAP:break-word">{{ (.StartsAt.Add 28800e9).Format "2006-01-02 15:04:05" }}</td>
+            </tr>
+            {{- if .Labels.device }}
+            <tr>
+            <td align="left" style="font-family:微软雅黑;width: 20%" style="WORD-WRAP:break-word">磁盘设备 / device</td>
+            <td align="left" style="font-family:微软雅黑;width: 80%" style="WORD-WRAP:break-word">{{ .Labels.device }}</td>
+            </tr>
+            {{- end }}
+            {{- if .Labels.volume }}
+            <tr>
+            <td align="left" style="font-family:微软雅黑;width: 20%" style="WORD-WRAP:break-word">设备卷 / volume</td>
+            <td align="left" style="font-family:微软雅黑;width: 80%" style="WORD-WRAP:break-word">{{ .Labels.volume }}</td>
+            </tr>
+            {{- end }}
+            {{- if .Labels.mountpoint }}
+            <tr>
+            <td align="left" style="font-family:微软雅黑;width: 20%" style="WORD-WRAP:break-word">挂载点 / Mountpoint</td>
+            <td align="left" style="font-family:微软雅黑;width: 80%" style="WORD-WRAP:break-word">{{ .Labels.mountpoint }}</td>
+            </tr>
+            {{- end }}
+            {{- if .Annotations.issue }}
+            <tr>
+            <td align="left" style="font-family:微软雅黑; width: 20%" style="WORD-WRAP:break-word">告警问题 / Issue</td>
+            <td align="left" style="font-family:微软雅黑; width: 80%" style="WORD-WRAP:break-word">{{ .Annotations.issue }}</td>
+            </tr>
+            {{- end }}
+            {{- if .Annotations.value }}
+            <tr>
+            <td align="left" style="font-family:微软雅黑; width: 20%" style="WORD-WRAP:break-word">触发告警值 / Occur Value</td>
+            <td align="left" style="font-family:微软雅黑; width: 80%" style="WORD-WRAP:break-word">{{ .Annotations.value }}</td>
+            </tr>
+            {{- end }}
+            {{- if .Annotations.influence }}
+            <tr>
+            <td align="left" style="font-family:微软雅黑; width: 20%" style="WORD-WRAP:break-word">告警影响 / Influence</td>
+            <td align="left" style="font-family:微软雅黑; width: 80%" style="WORD-WRAP:break-word">{{ .Annotations.influence }}</td>
+            </tr>
+            {{- end }}
+            <tr>
+            <td align="left" style="font-family:微软雅黑; width: 20%" style="WORD-WRAP:break-word">开单协助 / File Ticket</td>
+            <td align="left" style="font-family:微软雅黑;width: 20%" style="WORD-WRAP:break-word"><a href="https://jira.unilever-china.com/servicedesk/customer/portal/19/create/348">请求Cloud团队协助</a></td>
+            </tr>
+          </table>
+    {{- end }}
+    {{- end }}
+    {{- if .Alerts.Resolved }}
+          <p style="font-family:微软雅黑">Dear customer, Happy New Year,</p>
+          <p style="font-family:微软雅黑">此前的告警已经停止，系统已恢复正常，信息如下</p>
+    {{- range .Alerts }}
+          <table border="1" style="border:5px solid #F2F2F2;" cellspacing="4" cellpadding="3" width="650" style="table-layout:fixed">
+            <tr> 
+              <th align="left"><b>Alarm item</b></marquee></th> 
+              <th align="left"><b>Content information</b></marquee></th> 
+            </tr>
+            {{- if .Labels.subscriptionName }}
+            <tr>
+            <td align="left" style="font-family:微软雅黑;width: 20%" style="WORD-WRAP:break-word">订阅名 / Subscription</td>
+            <td align="left" style="font-family:微软雅黑;width: 80%" style="WORD-WRAP:break-word">{{ .Labels.subscriptionName }}</td>
+            </tr>
+            {{- end }}
+            {{- if .Labels.resourceGroup }}
+            <tr>
+            <td align="left" style="font-family:微软雅黑;width: 20%" style="WORD-WRAP:break-word">资源组 / ResourceGroup</td>
+            <td align="left" style="font-family:微软雅黑;width: 80%" style="WORD-WRAP:break-word">{{ .Labels.resourceGroup }}</td>
+            </tr>
+            {{- end }}
+            {{- if .Labels.resourceType }}
+            <tr>
+            <td align="left" style="font-family:微软雅黑;width: 20%" style="WORD-WRAP:break-word">资源类型 / ResourceType</td>
+            <td align="left" style="font-family:微软雅黑;width: 80%" style="WORD-WRAP:break-word">{{ .Labels.resourceType }}</td>
+            </tr>
+            {{- end }}
+            {{- if .Labels.application }}
+            <tr>
+            <td align="left" style="font-family:微软雅黑; width: 20%" style="WORD-WRAP:break-word">应用ID / ApplicationID</td>
+            <td align="left" style="font-family:微软雅黑;width: 80%" style="WORD-WRAP:break-word">{{ .Labels.application }}</td>
+            </tr>
+            {{- end }}
+            {{- if .Labels.environment }}
+            <tr>
+            <td align="left" style="font-family:微软雅黑; width: 20%" style="WORD-WRAP:break-word">环境 / Env</td>
+            <td align="left" style="font-family:微软雅黑;width: 80%" style="WORD-WRAP:break-word">{{ .Labels.environment }}</td>
+            </tr>
+            {{- end }}
+            {{- if .Labels.instance }}
+            <tr>
+            <td align="left" style="font-family:微软雅黑;width: 20%" style="WORD-WRAP:break-word">资源实例名 / Instance</td>
+            <td align="left" style="font-family:微软雅黑;width: 80%" style="WORD-WRAP:break-word">{{ .Labels.instance }}</td>
+            </tr>
+            {{- end }}
+            {{- if .Labels.instance_ip }}
+            <tr>
+            <td align="left" style="font-family:微软雅黑;width: 20%" style="WORD-WRAP:break-word">资源IP / IP</td>
+            <td align="left" style="font-family:微软雅黑;width: 80%" style="WORD-WRAP:break-word">{{ .Labels.instance_ip }}</td>
+            </tr>
+            {{- end }}
+            {{- if .Labels.volume }}
+            <tr>
+            <td align="left" style="font-family:微软雅黑;width: 20%" style="WORD-WRAP:break-word">磁盘设备 / Volume</td>
+            <td align="left" style="font-family:微软雅黑;width: 80%" style="WORD-WRAP:break-word">{{ .Labels.volume }}</td>
+            </tr>
+            {{- end }}
+            {{- if .Labels.mountpoint }}
+            <tr>
+            <td align="left" style="font-family:微软雅黑;width: 20%" style="WORD-WRAP:break-word">挂载点 / Mountpoint</td>
+            <td align="left" style="font-family:微软雅黑;width: 80%" style="WORD-WRAP:break-word">{{ .Labels.mountpoint }}</td>
+            </tr>
+            {{- end }}
+            <tr>
+            <td align="left" style="font-family:微软雅黑;width: 20%" style="WORD-WRAP:break-word">告警严重性 / Severity</td>
+            <td align="left" bgcolor="#00e500" style="font-family:微软雅黑;width: 80%" style="WORD-WRAP:break-word">{{ .Labels.severity }}</td>
+            </tr>
+            <tr>
+            <td align="left" style="font-family:微软雅黑;width: 20%" style="WORD-WRAP:break-word">首次告警时间 / First Occur</td>
+            <td align="left" style="font-family:微软雅黑;width: 80%" style="WORD-WRAP:break-word">{{ (.StartsAt.Add 28800e9).Format "2006-01-02 15:04:05" }}</td>
+            </tr>
+            <tr>
+            <td align="left" style="font-family:微软雅黑;width: 20%" style="WORD-WRAP:break-word">解除告警时间 / First Occur</td>
+            <td align="left" style="font-family:微软雅黑;width: 80%" style="WORD-WRAP:break-word">{{ (.EndsAt.Add 28800e9).Format "2006-01-02 15:04:05" }}</td>
+            </tr>
+            {{- if .Annotations.issue }}
+            <tr>
+            <td align="left" style="font-family:微软雅黑; width: 20%" style="WORD-WRAP:break-word">解除告警 / Issue</td>
+            <td align="left" style="font-family:微软雅黑; width: 80%" style="WORD-WRAP:break-word">{{ .Annotations.issue }}</td>
+            </tr>
+            {{- end }}
+            <tr>
+            </tr>
+          </table>
+    {{- end }}
+    {{- end }}
+        </div>
+      </body>
+    </html>
+    {{- end }}
+{% endraw %}
+
+  slack.tmpl: |-
+{%- raw %}
+    {{ define "slack.default.title" }}
+    {{ template "subjectPrefix" . }} - {{ .GroupLabels.alertname }}
+    {{- end }}
+
+    {{ define "slack.default.text" }}
+    {{- if .Alerts.Firing }}
+    {{- range .Alerts }}
+    {{- if .Labels.subscriptionName }}
+    Subscription: {{ .Labels.subscriptionName }}
+    {{- end }}
+    ResourceGroup: {{ .Labels.resourceGroup }}
+    ResourceType: {{ .Labels.resourceType }}
+    ApplicationID: {{ .Labels.application }}
+    Instance: {{ .Labels.instance }}
+    Severity: {{ .Labels.severity }}
+    Issue: {{ .Annotations.issue }}
+
+    {{- end }}
+    {{- end }}
+    {{- if .Alerts.Resolved }}
+    {{- range .Alerts }}
+    Subscription: {{ .Labels.subscriptionName }}
+    ResourceGroup: {{ .Labels.resourceGroup }}
+    ResourceType: {{ .Labels.resourceType }}
+    ApplicationID: {{ .Labels.application }}
+    Instance: {{ .Labels.instance }}
+    Severity: {{ "Resolved" }}
+    Issue: {{ .Annotations.issue }}
+
+    {{- end }}
+    {{- end}}
+    {{- end }}
+{% endraw %}
