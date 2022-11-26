@@ -1,0 +1,59 @@
+{% if component.prometheus.quota is defined %}
+{% set quota_cpu = component.prometheus.quota.cpu %}
+{% set quota_mem = component.prometheus.quota.mem %}
+{% else %}
+{% set quota_cpu = "200m" %}
+{% set quota_mem = "200Mi" %}
+{% endif %}
+
+apiVersion: monitoring.coreos.com/v1
+kind: Prometheus
+metadata:
+  name: {{ project.name }}
+  namespace: {{ project.namespace }}
+spec:
+  resources:
+    requests:
+      cpu: {{ quota_cpu }}
+      memory: {{ quota_mem }}
+    limits:
+      cpu: {{ quota_cpu }}
+      memory: {{ quota_mem }}
+  enableAdminAPI: true
+  enableRemoteWriteReceiver: true
+  serviceAccountName: {{ project.name }}
+  enableFeatures:
+  - auto-gomaxprocs
+  securityContext:
+    fsGroup: 2000
+    runAsGroup: 2000
+    runAsNonRoot: true
+    runAsUser: 1000
+    seccompProfile:
+      type: RuntimeDefault
+  retention: {{ component.prometheus.retention.duration | default('48h') }}
+  retentionSize: {{ component.prometheus.retention.size | default('1GB') }}
+  ruleNamespaceSeletor: {}
+  ruleSelector:
+    matchLabels:
+      project: "{{ project.name }}"
+  evaluationInterval: 60s
+  probeSelector: {}
+  alerting:
+    alertmanagers:
+    - name: "{{ project.name }}-alertmanager"
+      port: 9093
+      namespace: "{{ project.namespace }}"
+      apiVersion: v2
+      pathPrefix: /
+{% if component.prometheus is defined %}
+  storage:
+    volumeClaimTemplate:
+      spec:
+        accessModes:
+        - ReadWriteOnce
+        resources:
+          requests:
+            storage: {{ component.prometheus.capacity }}
+        storageClassName: {{ component.prometheus.storageClass }}
+{% endif %}
