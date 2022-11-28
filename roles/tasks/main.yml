@@ -10,3 +10,7 @@
 - import_tasks: exporter.yml
 
 - import_tasks: operator.yml
+
+- import_tasks: scrapeconfig.yml
+
+- import_tasks: prometheusagent.yml

@@ -1,0 +1,11 @@
+---
+- name: prometheus | prometheusAgent | github
+  k8s:
+    kubeconfig: "{{ kubeconfig }}"
+    state: present
+    definition: "{{ lookup('template', 'prometheusagents/github.yml.j2') }}"
+  when: monitor.github is defined
+  tags:
+  - prometheus
+  - prometheus_prometheusagent
+  - prometheus_prometheusagent_github
