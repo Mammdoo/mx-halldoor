@@ -1,0 +1,10 @@
+apiVersion: monitoring.coreos.com/v1alpha1
+kind: ScrapeConfig
+metadata:
+  name: {% block name %}{% endblock %} 
+  namespace: "{{ project.namespace }}"
+  labels:
+    project: "{{ project.name }}"
+{% block label %}{% endblock %}
+spec:
+{% block spec %}{% endblock %}

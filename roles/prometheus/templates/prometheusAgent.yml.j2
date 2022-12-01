@@ -1,0 +1,16 @@
+apiVersion: monitoring.coreos.com/v1alpha1
+kind: PrometheusAgent
+metadata:
+  name: {% block name %}{% endblock %} 
+  namespace: {{ project.namespace }}
+spec:
+  replicas: 1
+  resources:
+  remoteWrite:
+    - url: http://{{ project.name }}-prometheus/api/v1/write
+  scrapeConfigSelector:
+    matchLabels:
+      project: "{{ project.name }}"
+{% block label %}{% endblock %}
+  replicaExternalLabelName: ""
+  prometheusExternalLabelName: ""

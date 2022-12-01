@@ -1,0 +1,42 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ project.name }}-templates
+  namespace: {{ project.namespace }}
+data:
+  common.tmpl: |-
+{%- raw %}
+    {{ define "Status" }}
+    {{- if eq .Status "firing" }}
+    触发告警
+    {{- end }}
+    {{- if eq .Status "resolved" }}
+    解除告警
+    {{- end }}
+    {{ end }}
+{% endraw %}
+    {{ '{{- define "titlePrefix" }}' }}{{ channel.titlePrefix | default("【Mammdoo告警平台】") }}{{ '{{ end }}' }}
+
+  slack.tmpl: |-
+{%- raw %}
+    {{ define "slack.default.title" }}
+    {{ template "titlePrefix" . }} - {{ .GroupLabels.alertname }}
+    {{- end }}
+
+    {{ define "slack.default.text" }}
+    {{- if .Alerts.Firing }}
+    {{- range .Alerts }}
+    Severity: {{ .Labels.severity }}
+    Issue: {{ .Annotations.issue }}
+
+    {{- end }}
+    {{- end }}
+    {{- if .Alerts.Resolved }}
+    {{- range .Alerts }}
+    Severity: {{ "Resolved" }}
+    Issue: {{ .Annotations.issue }}
+
+    {{- end }}
+    {{- end}}
+    {{- end }}
+{% endraw %}

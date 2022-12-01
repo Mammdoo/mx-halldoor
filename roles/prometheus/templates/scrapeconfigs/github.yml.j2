@@ -1,0 +1,15 @@
+{% extends "scrapeConfig.yml.j2" %}
+
+{% block name %}{{ project.name }}-github{% endblock %}
+
+{% block label %}
+    target: github
+{% endblock %}
+
+{% block spec %}
+  staticConfigs:
+    - targets:
+      - "{{ project.name }}-{{ ComponentMeta['github'].name }}"
+  scrapeInterval: 30s
+  scrapeTimeout: 30s
+{% endblock %}
