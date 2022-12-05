@@ -1,10 +1,11 @@
 apiVersion: monitoring.coreos.com/v1alpha1
 kind: ScrapeConfig
 metadata:
-  name: {% block name %}{% endblock %} 
+  name: "{{ project.name }}-{{ item.0.name }}-{{ item.1.name }}"
   namespace: "{{ project.namespace }}"
   labels:
     project: "{{ project.name }}"
-{% block label %}{% endblock %}
+    type: "{{ item.0.name }}"
+    target: "{{ item.1.name }}"
 spec:
 {% block spec %}{% endblock %}

@@ -1,0 +1,108 @@
+---
+- name: generator | prometheus | folder
+  file:
+    path: customer/{{ item }}
+    state: directory
+  with_items:
+  - rbac
+  - config
+  - exporter
+  - operator
+  - scrapeconfig
+  - prometheusagent
+  tags:
+  - generator_prometheus
+  - generator_prometheus_folder
+    
+- name: generator | prometheus | namespace
+  template:
+    src: namespace.yml.j2
+    dest: customer/namepsace.yml
+  tags:
+  - generator_prometheus
+  - generator_prometheus_namespace
+
+- name: generator | prometheus | rbac
+  template:
+    src: "{{ item }}.yml.j2"
+    dest: customer/rbac/{{ item }}.yml
+  with_items:
+  - role
+  - serviceaccount
+  - rolebinding
+  tags:
+  - generator_prometheus
+  - generator_prometheus_rbac
+
+- name: generator | prometheus | config
+  template:
+    src: "{{ item }}.yml.j2"
+    dest: customer/config/{{ item }}.yml
+  with_items:
+  - secret
+  - template
+  tags:
+  - generator_prometheus
+  - generator_prometheus_config
+
+- name: generator | prometheus | exporter
+  template:
+    src: svc-exporter.yml.j2
+    dest: customer/exporter/svc-{{ item.exporter.name }}.yml
+  with_items: "{{ ScrapeMeta }}"
+  when: monitor[item.name] is defined
+  tags:
+  - generator_prometheus
+  - generator_prometheus_exporter
+
+- name: generator | prometheus | exporter
+  template:
+    src: exporters/{{ item.exporter.name }}.yml.j2
+    dest: customer/exporter/deploy-{{ item.exporter.name }}.yml
+  with_items: "{{ ScrapeMeta }}"
+  when: monitor[item.name] is defined
+  tags:
+  - generator_prometheus
+  - generator_prometheus_exporter
+
+- name: generator | prometheus | operator
+  template:
+    src: svc-prometheus.yml.j2
+    dest: customer/operator/svc-prometheus.yml
+  tags:
+  - generator_prometheus
+  - generator_prometheus_operator
+
+- name: generator | prometheus | operator
+  template:
+    src: "{{ item }}.yml.j2"
+    dest: customer/operator/{{ item }}.yml
+  with_items:
+  - alertmanagerConfig
+  - alertmanager
+  - prometheus
+  tags:
+  - generator_prometheus
+  - generator_prometheus_operator
+
+- name: generator | prometheus | scrape
+  template:
+    src: scrapeconfig/{{ item.0.name }}.yml.j2
+    dest: customer/scrapeconfig/{{ item.0.name }}-{{ item.1.name }}.yml
+  with_subelements:
+  - "{{ ScrapeMeta }}"
+  - scrape
+  tags:
+  - generator_prometheus
+  - generator_prometheus_scrape
+
+- name: generator | prometheus | agent
+  template:
+    src: prometheusAgent.yml.j2
+    dest: customer/prometheusagent/{{ item.0.name }}-{{ item.1.name }}.yml
+  with_subelements:
+  - "{{ ScrapeMeta }}"
+  - scrape
+  tags:
+  - generator_prometheus
+  - generator_prometheus_scrape

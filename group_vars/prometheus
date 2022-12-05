@@ -6,10 +6,11 @@ ComponentMeta:
     name: alertmanager
     port: 9093
 
+
 ScrapeMeta:
 - name: github
   exporter:
-  - name: github-exporter
+    name: github-exporter
     image: githubexporter/github-exporter
     tag: latest
     port: 9171

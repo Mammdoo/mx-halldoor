@@ -1,4 +1,6 @@
 ---
+- import_tasks: generator.yml
+
 - import_tasks: prepare.yml
 
 - import_tasks: rbac.yml

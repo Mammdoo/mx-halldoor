@@ -14,12 +14,8 @@
   k8s:
     kubeconfig: "{{ kubeconfig }}"
     state: "{{ project.state }}"
-    definition: "{{ lookup('template', 'exporters/{{ item.name }}.yml.j2') }}"
-  with_subelement: 
-  - "{{ ScrapeMeta }}"
-  - exporter
-  - flags:
-    skip_missing: True
+    definition: "{{ lookup('template', 'exporters/{{ item.exporter.name }}.yml.j2') }}"
+  with_items: "{{ ScrapeMeta }}"
   when: monitor[item.name] is defined
   tags:
   - prometheus

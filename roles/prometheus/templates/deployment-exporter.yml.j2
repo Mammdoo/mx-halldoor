@@ -1,34 +1,34 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: "{{ project.name }}-{{ item.1.name }}"
+  name: "{{ project.name }}-{{ item.exporter.name }}"
   namespace: "{{ project.namespace }}"
   labels:
-    app: "{{ item.1.name }}"
-    {{ item.1.name }}: "{{ project.name }}"
+    app: "{{ item.exporter.name }}"
+    {{ item.exporter.name }}: "{{ project.name }}"
 spec:
   replicas: 3
   selector:
     matchLabels:
-      app: "{{ item.1.name }}"
-      {{ item.1.name }}: "{{ project.name }}"
+      app: "{{ item.exporter.name }}"
+      {{ item.exporter.name }}: "{{ project.name }}"
   template:
     metadata:
       labels:
-        app: "{{ item.1.name }}"
-        {{ item.1.name }}: "{{ project.name }}"
+        app: "{{ item.exporter.name }}"
+        {{ item.exporter.name }}: "{{ project.name }}"
     spec:
 {% block securityContext %}{% endblock %}
       terminationGracePeriodSeconds: 60
       containers:
-        - name: "{{ item.1.name }}"
-          image: "{{ item.1.image }}:{{ item.1.tag }}"
+        - name: "{{ item.exporter.name }}"
+          image: "{{ item.exporter.image }}:{{ item.exporter.tag }}"
           imagePullPolicy: "IfNotPresent"
 {% block podSecurityContext %}{% endblock %}
           env:
 {% block env %}{% endblock %}
           ports:
-            - containerPort: {{ item.1.port }}
+            - containerPort: {{ item.exporter.port }}
               name: metrics
               protocol: TCP
           resources:

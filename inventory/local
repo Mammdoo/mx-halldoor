@@ -2,4 +2,4 @@
 kubernetes-connection  ansible_connection=local  
 
 [prometheus:vars]
-kubeconfig=customer/{{ project.name }}/kubeconfig 
+kubeconfig=customer/kubeconfig 

@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: "{{ project.name }}-{{ item.exporter.name }}"
+  namespace: "{{ project.namespace }}"
+spec:
+  type: ClusterIP
+  ports:
+  - name: http
+    port: 80
+    targetPort: {{ item.exporter.port }}
+  selector:
+    app: {{ item.exporter.name }}
+    {{ item.exporter.name }}: {{ project.name }}

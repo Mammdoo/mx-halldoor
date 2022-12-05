@@ -1,16 +1,31 @@
+{% if item.1.quota is defined %}
+{% set quota_cpu = item.1.quota.cpu %}
+{% set quota_mem = item.1.quota.mem %}
+{% else %}
+{% set quota_cpu = "50" %}
+{% set quota_mem = "50Mi" %}
+{% endif %}
+
 apiVersion: monitoring.coreos.com/v1alpha1
 kind: PrometheusAgent
 metadata:
-  name: {% block name %}{% endblock %} 
+  name: "{{ project.name }}-{{ item.0.name }}-{{ item.1.name }}"
   namespace: {{ project.namespace }}
 spec:
   replicas: 1
   resources:
+    requests:
+      cpu: {{ quota_cpu }}
+      memory: {{ quota_mem }}
+    limits:
+      cpu: {{ quota_cpu }}
+      memory: {{ quota_mem }}
   remoteWrite:
     - url: http://{{ project.name }}-prometheus/api/v1/write
   scrapeConfigSelector:
     matchLabels:
       project: "{{ project.name }}"
-{% block label %}{% endblock %}
+      type: "{{ item.0.name }}"
+      target: "{{ item.1.name }}"
   replicaExternalLabelName: ""
   prometheusExternalLabelName: ""
