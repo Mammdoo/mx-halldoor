@@ -28,3 +28,13 @@
   - prometheus
   - prometheus_prometheus
   - prometheus_prometheus_deploy
+
+- name: prometheus | prometheusRule | create
+  k8s:
+    kubeconfig: "{{ kubeconfig }}"
+    state: present
+    definition: "{{ lookup('template', 'rules//*.yml.j2') }}"
+  when: monitor.github is defined
+  tags:
+  - prometheus
+  - prometheus_prometheusrule

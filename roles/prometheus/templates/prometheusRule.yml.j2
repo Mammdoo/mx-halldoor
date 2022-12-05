@@ -1,0 +1,12 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: "{{ project }}-{{ ruleName }}"
+  namespace: "{{ namespace }}"
+  labels:
+    project: "{{ project }}"
+{% block label %}
+{% endblock %}
+spec:
+  groups:
+{% block rule %}{% endblock %}

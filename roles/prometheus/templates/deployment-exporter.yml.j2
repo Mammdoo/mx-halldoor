@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "{{ project.name }}-{{ item.1.name }}"
+  namespace: "{{ project.namespace }}"
+  labels:
+    app: "{{ item.1.name }}"
+    {{ item.1.name }}: "{{ project.name }}"
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: "{{ item.1.name }}"
+      {{ item.1.name }}: "{{ project.name }}"
+  template:
+    metadata:
+      labels:
+        app: "{{ item.1.name }}"
+        {{ item.1.name }}: "{{ project.name }}"
+    spec:
+{% block securityContext %}{% endblock %}
+      terminationGracePeriodSeconds: 60
+      containers:
+        - name: "{{ item.1.name }}"
+          image: "{{ item.1.image }}:{{ item.1.tag }}"
+          imagePullPolicy: "IfNotPresent"
+{% block podSecurityContext %}{% endblock %}
+          env:
+{% block env %}{% endblock %}
+          ports:
+            - containerPort: {{ item.1.port }}
+              name: metrics
+              protocol: TCP
+          resources:
+{% block quota %}
+{% endblock %}
+          startupProbe:
+            failureThreshold: 5
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            tcpSocket:
+              port: metrics
+          livenessProbe:
+            failureThreshold: 5
+            initialDelaySeconds: 15
+            periodSeconds: 30
+            tcpSocket:
+              port: metrics
+          readinessProbe:
+            failureThreshold: 5
+            initialDelaySeconds: 15
+            periodSeconds: 30
+            tcpSocket:
+              port: metrics

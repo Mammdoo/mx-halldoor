@@ -9,3 +9,18 @@
   - prometheus
   - prometheus_exporter
   - prometheus_exporter_deploy
+
+- name: prometheus | exporter
+  k8s:
+    kubeconfig: "{{ kubeconfig }}"
+    state: "{{ project.state }}"
+    definition: "{{ lookup('template', 'exporters/{{ item.name }}.yml.j2') }}"
+  with_subelement: 
+  - "{{ ScrapeMeta }}"
+  - exporter
+  - flags:
+    skip_missing: True
+  when: monitor[item.name] is defined
+  tags:
+  - prometheus
+  - prometheus_exporter
