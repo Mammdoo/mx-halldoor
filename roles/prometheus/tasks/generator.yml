@@ -10,6 +10,7 @@
   - operator
   - scrapeconfig
   - prometheusagent
+  - prometheusrule
   tags:
   - generator_prometheus
   - generator_prometheus_folder
@@ -106,3 +107,14 @@
   tags:
   - generator_prometheus
   - generator_prometheus_scrape
+
+- name: generator | prometheus | rules
+  template:
+    src: rules/{{ item.0.name }}/{{ item.1.name }}.yml.j2
+    dest: customer/prometheusrule/{{ item.0.name }}-{{ item.1.name }}.yml
+  with_subelements:
+  - "{{ ScrapeMeta }}"
+  - scrape
+  tags:
+  - generator_prometheus
+  - generator_prometheus_calc

@@ -1,12 +1,15 @@
+{% if monitor[item.0.name].keep_firing is defined %}
+{% set keep_firing = monitor[item.0.name].keep_firing %}
+{% else %}
+{% set keep_firing = "5m" %}
+{% endif %}
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
-  name: "{{ project }}-{{ ruleName }}"
-  namespace: "{{ namespace }}"
+  name: "{{ project.name }}-{{ item.0.name }}-{{ item.1.name }}"
+  namespace: "{{ project.namespace }}"
   labels:
-    project: "{{ project }}"
-{% block label %}
-{% endblock %}
+    project: "{{ project.name }}"
 spec:
   groups:
 {% block rule %}{% endblock %}

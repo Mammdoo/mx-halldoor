@@ -11,8 +11,8 @@ spec:
     - alertname
     - severity
     - instance
-    groupWait: 10s
-    groupInterval: 10s
+    groupWait: 30s
+    groupInterval: 30s
     repeatInterval: 24h
     receiver: default
     continue: false
@@ -33,7 +33,7 @@ spec:
     - apiURL:
         name: "{{ project.name }}"
         key: slack.url
-      channel: {{ channel.slack.channel }}
+      channel: "{{ channel.slack.channel }}"
       sendResolved: true
       text: {% raw %}'{{ template "slack.default.text" . }}'{% endraw %} 
 {% endif %}

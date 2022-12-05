@@ -1,12 +1,11 @@
 {% extends "prometheusRule.yml.j2" %}
-{% set ruleName = "github-default" %}
 
 {% block rule %}
   - name: Github - Track Open issue
     rules:
     - alert: Notification - Detect New Issue
       expr: rate(github_repo_open_issues[3m]) > 0
-      keep_firing_for: {{ resolve_flapping_time }}
+      keep_firing_for: {{ keep_firing }}
       labels:
         severity: notification
         alert_type: issue
