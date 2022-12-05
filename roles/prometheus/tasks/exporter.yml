@@ -3,17 +3,6 @@
   k8s:
     kubeconfig: "{{ kubeconfig }}"
     state: "{{ project.state }}"
-    definition: "{{ lookup('template', 'exporters/{{ ComponentMeta[item.key].name }}.yml.j2') }}"
-  with_dict: "{{ monitor }}"
-  tags:
-  - prometheus
-  - prometheus_exporter
-  - prometheus_exporter_deploy
-
-- name: prometheus | exporter
-  k8s:
-    kubeconfig: "{{ kubeconfig }}"
-    state: "{{ project.state }}"
     definition: "{{ lookup('template', 'exporters/{{ item.exporter.name }}.yml.j2') }}"
   with_items: "{{ ScrapeMeta }}"
   when: monitor[item.name] is defined

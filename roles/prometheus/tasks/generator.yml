@@ -93,6 +93,7 @@
   with_subelements:
   - "{{ ScrapeMeta }}"
   - scrape
+  when: monitor[item.0.name] is defined
   tags:
   - generator_prometheus
   - generator_prometheus_scrape
@@ -104,6 +105,7 @@
   with_subelements:
   - "{{ ScrapeMeta }}"
   - scrape
+  when: monitor[item.0.name] is defined
   tags:
   - generator_prometheus
   - generator_prometheus_scrape
@@ -115,6 +117,7 @@
   with_subelements:
   - "{{ ScrapeMeta }}"
   - scrape
+  when: monitor[item.0.name] is defined
   tags:
   - generator_prometheus
   - generator_prometheus_calc

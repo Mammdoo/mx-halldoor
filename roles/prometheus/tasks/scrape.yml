@@ -1,0 +1,28 @@
+---
+- name: prometheus | scrapeconfig | github
+  k8s:
+    kubeconfig: "{{ kubeconfig }}"
+    state: present
+    definition: "{{ lookup('template', 'scrapeconfig/{{ item.0.name }}.yml.j2') }}"
+  with_subelements:
+  - "{{ ScrapeMeta }}"
+  - scrape
+  when: monitor[item.0.name] is defined
+  tags:
+  - prometheus
+  - prometheus_scrape
+  - prometheus_scrape_config
+
+- name: prometheus | prometheusAgent | github
+  k8s:
+    kubeconfig: "{{ kubeconfig }}"
+    state: present
+    definition: "{{ lookup('template', 'prometheusAgent.yml.j2') }}"
+  with_subelements:
+  - "{{ ScrapeMeta }}"
+  - scrape
+  when: monitor[item.0.name] is defined
+  tags:
+  - prometheus
+  - prometheus_scrape
+  - prometheus_scrape_agent

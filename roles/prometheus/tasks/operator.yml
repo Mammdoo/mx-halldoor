@@ -33,8 +33,11 @@
   k8s:
     kubeconfig: "{{ kubeconfig }}"
     state: present
-    definition: "{{ lookup('template', 'rules//*.yml.j2') }}"
-  when: monitor.github is defined
+    definition: "{{ lookup('template', 'rules/{{ item.0.name }}/{{ item.1.name }}.yml.j2') }}"
+  with_subelements:
+  - "{{ ScrapeMeta }}"
+  - scrape
+  when: monitor[item.0.name] is defined
   tags:
   - prometheus
   - prometheus_prometheusrule

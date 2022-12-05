@@ -1,19 +1,12 @@
 ---
-- name: prometheus | secret | create
+- name: prometheus | config | create
   k8s:
     kubeconfig: "{{ kubeconfig }}"
     state: "{{ project.state }}"
-    definition: "{{ lookup('template', 'secret.yml.j2') }}"
+    definition: "{{ lookup('template', '{{ item }}.yml.j2') }}"
+  with_items:
+  - secret
+  - template
   tags:
   - prometheus
   - prometheus_secret
-
-- name: prometheus | configmap | template
-  k8s:
-    kubeconfig: "{{ kubeconfig }}"
-    state: "{{ project.state }}"
-    definition: "{{ lookup('template', 'template.yml.j2') }}"
-  tags:
-  - prometheus
-  - prometheus_configmap
-  - prometheus_template
