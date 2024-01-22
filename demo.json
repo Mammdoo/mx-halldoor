@@ -7,8 +7,10 @@
   
   "monitor": {
     "github": {
-      "orgs": "mammdoo",
-      "users": "SingleCorner"
+      "env": {
+        "orgs": "mammdoo",
+        "users": "SingleCorner"
+      } 
     }
   },
 
@@ -25,14 +27,6 @@
 
   "channel": {
     "titlePrefix": "[mammdoo]",
-    "smtp.off": {
-      "host": "",
-      "port": 80,
-      "user": "",
-      "pass": "",
-      "from": "",
-      "tls": true,
-    },
     "slack": {
       "url": "",
       "channel": "#mammdoo-alerting"
