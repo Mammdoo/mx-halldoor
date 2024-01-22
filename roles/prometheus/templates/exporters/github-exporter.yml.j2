@@ -1,6 +1,6 @@
 {% extends "deployment-exporter.yml.j2" %}
 
-{% if monitor.github.quota is defined %}
+{% if monitor.github.env.quota is defined %}
 {% set quota_cpu = monitor.github.quota.cpu %}
 {% set quota_mem = monitor.github.quota.mem %}
 {% else %}
@@ -10,13 +10,13 @@
 
 {% block env %}
             - name: ORGS
-              value: "{{ monitor.github.orgs | default('') }}"
+              value: "{{ monitor.github.env.orgs | default('') }}"
             - name: USERS
-              value: "{{ monitor.github.users | default('') }}"
+              value: "{{ monitor.github.env.users | default('') }}"
             - name: REPOS
-              value: "{{ monitor.github.repos | default('') }}"
+              value: "{{ monitor.github.env.repos | default('') }}"
             - name: GITHUB_TOKEN
-              value: "{{ monitor.github.token | default('') }}"
+              value: "{{ monitor.github.env.token | default('') }}"
 {% endblock %}
 
 {% block quota %}
