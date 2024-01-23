@@ -10,7 +10,11 @@
       "env": {
         "orgs": "mammdoo",
         "users": "SingleCorner"
-      } 
+      },
+      "quota": {
+        "cpu": "50m",
+        "mem": "100Mi"
+      }
     }
   },
 

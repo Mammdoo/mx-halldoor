@@ -1,8 +1,12 @@
-# 0.0.0
-## Feature
+## 0.0.0
+### Feature
 - [add] deploy an entirely monitoring system with prometheus operator
 - [add] included github-exporter
 - Write by ansible playbook
 
-## Known Iuuse
+### Known Iuuse
 - demo.json without document, so you may not able to use it
+
+## 0.0.1
+### Updated
+-  create README, CHANGELOG
