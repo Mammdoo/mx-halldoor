@@ -19,6 +19,14 @@
 - receive alerting from prometheus
 - load config from alertmanagerConfig
 
-### flow
-exporter -> prometheusAgent（scrapeConfig） -> prometheus（prometheusRule） -> alertmanager（alertmanagerConfig）
-
+### flowchart
+```mermaid
+graph TD;
+    exporter-->prometheusAgent;
+    scrapeConfig-->prometheusAgent;
+    prometheusAgent-->prometheus;
+    prometheusRule --> prometheus;
+    prometheus-->alertmanager;
+    alertmanagerConfig --> alertmanager
+    alertmanager-->channel;
+```
