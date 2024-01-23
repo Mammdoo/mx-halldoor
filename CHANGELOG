@@ -1,0 +1,8 @@
+# 0.0.0
+## Feature
+- [add] deploy an entirely monitoring system with prometheus operator
+- [add] included github-exporter
+- Write by ansible playbook
+
+## Known Iuuse
+- demo.json without document, so you may not able to use it
