@@ -7,3 +7,140 @@ ScrapeMeta:
     port: 9171
   scrape:
   - name: default
+- name: azure
+  exporter:
+    name: azure-metrics-exporter
+    image: webdevops/azure-metrics-exporter
+    tag: 23.7.0
+    port: 8080
+  scrape:
+  - name: cache-redis
+    resourceType: Microsoft.Cache/Redis
+    resource: cache
+    type: redis
+    metrics:
+    - allevictedkeys
+    - allpercentprocessortime
+    - allserverLoad
+    - allusedmemory
+    - allusedmemorypercentage
+    - alltotalkeys
+    - evictedkeys
+    - totalkeys
+    - usedmemory
+    - usedmemorypercentage
+    - serverLoad
+    - cacheLatency
+    - errors
+    - cachemissrate
+  - name: cosmosdb-dbaccounts
+    resourceType: Microsoft.DocumentDB/DatabaseAccounts
+    resource: cosmosdb
+    type: dbaccounts
+    metrics:
+    - TotalRequests
+    - TotalRequestUnits
+    - ServiceAvailability
+  - name: eventhub-namespaces
+    resourceType: Microsoft.EventHub/Namespaces
+    resource: eventhub
+    type: namespaces
+    metrics:
+    - ServerErrors
+    - UserErrors
+    - ThrottledRequests
+    - QuotaExceededErrors
+  - name: mysql-flex
+    resourceType: Microsoft.DBforMySQL/flexibleServers
+    resource: mysql
+    type: flex
+    metrics:
+    - active_connections
+    - aborted_connections
+    - com_drop_db
+    - com_drop_table
+    - io_consumption_percent
+    - cpu_percent
+    - memory_percent
+    - storage_percent
+    - replication_lag
+    - slow_queries
+    - total_connections
+  - name: mysql-servers
+    resourceType: Microsoft.DBforMySQL/servers
+    resource: mysql
+    type: servers
+    metrics:
+    - active_connections
+    - connections_failed
+    - cpu_percent
+    - memory_percent
+    - io_consumption_percent
+    - storage_percent
+    - seconds_behind_master
+  - name: postgresql-flex
+    resourceType: Microsoft.DBforPostgreSQL/flexibleServers
+    resource: postgresql
+    type: flex
+    metrics:
+    - active_connections
+    - client_connections_waiting
+    - connections_failed
+    - cpu_percent
+    - deadlocks
+    - is_db_alive
+    - disk_iops_consumed_percentage
+    - memory_percent
+    - physical_replication_delay_in_seconds
+    - storage_percent
+  - name: postgresql-servers
+    resourceType: Microsoft.DBforPostgreSQL/servers
+    resource: postgresql
+    type: servers
+    metrics:
+    - active_connections
+    - connections_failed
+    - cpu_percent
+    - io_consumption_percent
+    - memory_percent
+    - storage_percent
+    - pg_replica_log_delay_in_seconds
+  - name: servicebus-namespaces
+    resourceType: Microsoft.ServiceBus/Namespaces
+    resource: servicebus
+    type: namespaces
+    metrics:
+    - ServerErrors
+    - UserErrors
+    - ThrottledRequests      
+  - name: mssql-databases
+    resourceType: Microsoft.Sql/servers/databases
+    resource: mssql
+    type: databases
+    metrics:
+    - storage_percent
+    - connection_failed
+    - deadlock
+    - sqlserver_process_core_percent
+    - sqlserver_process_memory_percent
+  - name: mssql-managedinstances
+    resourceType: Microsoft.Sql/ManagedInstances
+    resource: mssql
+    type: managedinstances
+    metrics:
+    - avg_cpu_percent
+    - io_requests
+    - storage_space_used_mb
+    - reserved_storage_mb
+  - name: network-azurefirewalls
+    resourceType: Microsoft.Network/azureFirewalls
+    resource: network
+    type: azurefirewalls
+    metrics:
+    - FirewallHealth
+  - name: network-agw
+    resourceType: Microsoft.Network/applicationgateways
+    resource: network
+    type: agw
+    metrics:
+    - Throughput

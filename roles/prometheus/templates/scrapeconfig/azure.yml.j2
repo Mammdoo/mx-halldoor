@@ -1,0 +1,100 @@
+{% extends "scrapeConfig.yml.j2" %}
+
+{% block spec %}
+  staticConfigs:
+    - targets:
+      - "{{ project }}-{{ item.0.exporter.name }}"
+  metricsPath: /probe/metrics/list
+  scrapeInterval: 1m
+  scrapeTimeout: 40s
+  params:
+    name: ["azure:{{ item.1.resource }}:{{ item.1.type }}"]
+    template: ["{name}:{metric}:{aggregation}:{unit}"]
+    resourceType: ["{{ item.resourceType }}"]
+    metric: {{ item.1.metrics }}
+    interval: ["PT1M"]
+    timespan: ["PT1M"]
+    aggregation:
+    - count
+    - total
+    - average
+    - maximum
+    subscription: {{ monitor.azure.subscription }}
+  relabelings:
+  - sourceLabels: [__param_resourceType]
+    regex: (.*)
+    targetLabel: resourceType
+    replacement: $1
+  metricRelabelings:
+{% for i in monitor.azure.tags %}
+  - sourceLabels:
+    - tag_{{ i.source | lower }}
+    targetLabel: {{ i.target | lower }}
+    regex: (.+)
+    replacement: $1
+{% endfor %}
+  - sourceLabels:
+    - tag_prometheus
+    targetLabel: scrape
+    regex: global-scrape=disable;
+    action: drop
+  - sourceLabels:
+    - tag_prometheus
+    targetLabel: shouldAlert
+    regex: "(.*)global-alert=(.*?);(.*)"
+    replacement: $2
+  - sourceLabels:
+    - tag_prometheus
+    targetLabel: hasCustomize
+    regex: "(.*)global-customize=(.*?);(.*)"
+    replacement: $2
+  - sourceLabels:
+    - tag_prometheus
+    targetLabel: rule_common_cpu
+    regex: "(.*)rule-common-cpu=(.*?);(.*)"
+    replacement: $2
+  - sourceLabels:
+    - tag_prometheus
+    targetLabel: rule_common_ram
+    regex: "(.*)rule-common-ram=(.*?);(.*)"
+    replacement: $2
+  - sourceLabels:
+    - tag_prometheus
+    targetLabel: rule_common_storage
+    regex: "(.*)rule-common-storage=(.*?);(.*)"
+    replacement: $2
+  - sourceLabels:
+    - tag_prometheus
+    targetLabel: rule_common_io
+    regex: "(.*)rule-common-io=(.*?);(.*)"
+    replacement: $2
+  - sourceLabels:
+    - tag_prometheus
+    targetLabel: rule_db_drop
+    regex: "(.*)rule-db-drop=(.*?);(.*)"
+    replacement: $2
+  - sourceLabels:
+    - tag_prometheus
+    targetLabel: rule_db_replica
+    regex: "(.*)rule-db-replica=(.*?);(.*)"
+    replacement: $2
+  - sourceLabels:
+    - tag_prometheus
+    targetLabel: rule_redis_bigkey
+    regex: "(.*)rule-redis-bigkey=(.*?);(.*)"
+    replacement: $2
+  - sourceLabels:
+    - tag_prometheus
+    targetLabel: rule_redis_cache
+    regex: "(.*)rule-redis-cache=(.*?);(.*)"
+    replacement: $2  
+  - sourceLabels:
+    - resourceName
+    targetLabel: instance
+    regex: (.+)
+    replacement: $1
+  - action: labeldrop
+    regex: "prometheus|prometheus_replica|job|resourceID|resourceName|timespan|interval|subscriptionID|tag_prometheus|tag_environment"
+  - action: labeldrop
+    regex: "tag_applicationid|tag_itsg"
+{% endblock %}
