@@ -1,0 +1,87 @@
+{% extends "scrapeConfig.yml.j2" %}
+
+{% block spec %}
+  azureSDConfigs:
+{% for i in monitor.azure.subscription %}
+  - environment: {{ monitor.azure.location }}
+    authenticationMethod: OAuth
+    subscriptionID: {{ i.id }}
+    port: {{ monitor.azuresd.port[item.1.name] }}
+    tenantID: {{ monitor.azure.app.tenantid }}
+    clientID: {{ monitor.azure.app.clientid }}
+    clientSecret:
+      name: {{ project }}-prometheus
+      key: azure-app-clientkey
+    refreshInterval: 24h
+{% endfor %}
+  scrapeInterval: 15s
+  scrapeTimeout: 10s
+  relabelings:
+  - sourceLabels: ['__meta_azure_machine_tag_monitor']
+    regex: "false"
+    action: drop
+  - sourceLabels: ['__meta_azure_machine_tag_prometheus']
+    targetLabel: tag_prometheus
+    regex: (.+)
+  - sourceLabels: ['__meta_azure_machine_private_ip']
+    targetLabel: instance_ip
+  - sourceLabels: ['__meta_azure_machine_name']
+    targetLabel: instance
+  - sourceLabels: ['__meta_azure_machine_resource_group']
+    targetLabel: resourceGroup
+    action: lowercase
+  - sourceLabels: ['__meta_azure_machine_os_type']
+    targetLabel: resourceType
+{% if monitor.azure.tags is defined %}
+{% for i in monitor.azure.tags %}
+  - sourceLabels: ['__meta_azure_machine_tag_{{ i.scrape }}']
+    targetLabel: {{ i.target | lower}}
+{% endfor %}
+{% endif %}
+  - sourceLabels: ['resourceType']
+    regex: "(?i){{ item.1.name }}"
+    action: keep
+  metricRelabelings:
+  - sourceLabels:
+    - tag_prometheus
+    targetLabel: scrape
+    regex: "(.*)global-scrape=disable;(.*)"
+    action: drop
+  - sourceLabels:
+    - tag_prometheus
+    targetLabel: shouldAlert
+    regex: "(.*)global-alert=(.*?);(.*)"
+    replacement: $2
+  - sourceLabels:
+    - tag_prometheus
+    targetLabel: hasCustomize
+    regex: "(.*)global-customize=(.*?);(.*)"
+    replacement: $2
+  - sourceLabels:
+    - tag_prometheus
+    targetLabel: rule_common_cpu
+    regex: "(.*)rule-common-cpu=(.*?);(.*)"
+    replacement: $2
+  - sourceLabels:
+    - tag_prometheus
+    targetLabel: rule_common_ram
+    regex: "(.*)rule-common-ram=(.*?);(.*)"
+    replacement: $2
+  - sourceLabels:
+    - tag_prometheus
+    targetLabel: rule_common_storage
+    regex: "(.*)rule-common-storage=(.*?);(.*)"
+    replacement: $2
+  - sourceLabels:
+    - tag_prometheus
+    targetLabel: rule_common_io
+    regex: "(.*)rule-common-io=(.*?);(.*)"
+    replacement: $2
+  - action: labeldrop
+    regex: "tag_prometheus"
+{% for i in monitor.azuresd.relabel %}
+  - sourceLabels: {{ i.source }}
+    regex: {{ i.regex }}
+    action: {{ i.action }}
+{% endfor %}
+{% endblock %}

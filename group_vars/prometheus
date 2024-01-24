@@ -7,6 +7,10 @@ ScrapeMeta:
     port: 9171
   scrape:
   - name: default
+- name: azuresd
+  scrape:
+  - name: linux
+  - name: windows
 - name: azure
   exporter:
     name: azure-metrics-exporter

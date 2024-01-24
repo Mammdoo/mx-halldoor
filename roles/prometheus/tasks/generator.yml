@@ -51,7 +51,7 @@
     src: svc-exporter.yml.j2
     dest: customer/exporter/svc-{{ item.exporter.name }}.yml
   with_items: "{{ ScrapeMeta }}"
-  when: monitor[item.name] is defined
+  when: item.exporter is defined and monitor[item.name] is defined
   tags:
   - generator_prometheus
   - generator_prometheus_exporter
@@ -61,7 +61,7 @@
     src: exporters/{{ item.exporter.name }}.yml.j2
     dest: customer/exporter/deploy-{{ item.exporter.name }}.yml
   with_items: "{{ ScrapeMeta }}"
-  when: monitor[item.name] is defined
+  when: item.exporter is defined and monitor[item.name] is defined
   tags:
   - generator_prometheus
   - generator_prometheus_exporter
@@ -117,7 +117,10 @@
   with_subelements:
   - "{{ ScrapeMeta }}"
   - scrape
-  when: monitor[item.0.name] is defined
+  - flags:
+    skip_missing: True  
+  when: monitor[item.0.name] is defined 
+  ignore_errors: yes
   tags:
   - generator_prometheus
   - generator_prometheus_calc

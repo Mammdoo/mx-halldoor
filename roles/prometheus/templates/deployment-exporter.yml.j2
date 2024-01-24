@@ -26,6 +26,12 @@ spec:
           imagePullPolicy: "IfNotPresent"
 {% block podSecurityContext %}{% endblock %}
           env:
+{% if monitor[item.name].env is defined %}
+{% for i in monitor[item.name].env.items() %}
+            - name: {{ i[0] | upper }}
+              value: "{{ i[1] }}"
+{% endfor %}
+{% endif %}
 {% block env %}{% endblock %}
           ports:
             - containerPort: {{ item.exporter.port }}

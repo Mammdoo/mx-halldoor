@@ -1,0 +1,37 @@
+{% extends "deployment-exporter.yml.j2" %}
+
+{% if monitor[item.name].quota is defined %}
+{% set quota_cpu = monitor[item.name].quota.cpu %}
+{% set quota_mem = monitor[item.name].quota.mem %}
+{% else %}
+{% set quota_cpu = "100m" %}
+{% set quota_mem = "200Mi" %}
+{% endif %}
+
+{% block env %}
+            - name: "AZURE_TENANT_ID"
+              value: "{{ monitor.azure.app.tenantid }}"
+            - name: "AZURE_CLIENT_ID"
+              value: "{{ monitor.azure.app.clientid }}"
+            - name: "AZURE_CLIENT_SECRET"
+              value: "{{ monitor.azure.app.clientkey }}"
+            - name: "AZURE_ENVIRONMENT"
+              value: "{{ monitor.azure.location }}"
+            - name: "AZURE_RESOURCE_TAG"
+              value: "prometheus {{ monitor.azure.tags | map(attribute='scrape') | join (' ') }}"
+            - name: "AZURE_SERVICEDISCOVERY_CACHE_TTL"
+              value: "5m"
+            - name: "CONCURRENCY_SUBSCRIPTION"
+              value: "25"
+            - name: "CONCURRENCY_SUBSCRIPTION_RESOURCE"
+              value: "100"
+{% endblock %}
+
+{% block quota %}
+            limits:
+              cpu: "{{ quota_cpu }}"
+              memory: "{{ quota_mem }}"
+            requests:
+              cpu: "{{ quota_cpu }}"
+              memory: "{{ quota_mem }}"
+{% endblock %}

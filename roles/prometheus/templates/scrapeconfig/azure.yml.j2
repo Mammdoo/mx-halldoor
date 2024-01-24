@@ -10,7 +10,7 @@
   params:
     name: ["azure:{{ item.1.resource }}:{{ item.1.type }}"]
     template: ["{name}:{metric}:{aggregation}:{unit}"]
-    resourceType: ["{{ item.resourceType }}"]
+    resourceType: ["{{ item.1.resourceType }}"]
     metric: {{ item.1.metrics }}
     interval: ["PT1M"]
     timespan: ["PT1M"]
@@ -19,7 +19,7 @@
     - total
     - average
     - maximum
-    subscription: {{ monitor.azure.subscription }}
+    subscription: {{ monitor.azure.subscription |  map(attribute='id') }}
   relabelings:
   - sourceLabels: [__param_resourceType]
     regex: (.*)
@@ -28,10 +28,12 @@
   metricRelabelings:
 {% for i in monitor.azure.tags %}
   - sourceLabels:
-    - tag_{{ i.source | lower }}
+    - tag_{{ i.scrape | lower }}
     targetLabel: {{ i.target | lower }}
     regex: (.+)
     replacement: $1
+  - action: labeldrop
+    regex: "tag_{{ i.scrape | lower }}"
 {% endfor %}
   - sourceLabels:
     - tag_prometheus
@@ -94,7 +96,5 @@
     regex: (.+)
     replacement: $1
   - action: labeldrop
-    regex: "prometheus|prometheus_replica|job|resourceID|resourceName|timespan|interval|subscriptionID|tag_prometheus|tag_environment"
-  - action: labeldrop
-    regex: "tag_applicationid|tag_itsg"
+    regex: "prometheus|prometheus_replica|job|resourceID|resourceName|timespan|interval|subscriptionID|tag_prometheus"
 {% endblock %}
