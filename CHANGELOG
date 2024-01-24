@@ -8,5 +8,22 @@
 - demo.json without document, so you may not able to use it
 
 ## 0.0.1
-### Updated
+### BugFix
 -  create README, CHANGELOG
+
+## 0.1.0
+### Feature
+- 支持通过azure monitor采集metrics数据
+- 支持邮件发送能力
+- 支持邮件通知人生成，可根据application或者cgid配置通知人列表
+- 支持azureSD采集指标
+- exporter的环境变量支持通过monitor.x.env项的key-value方式赋值
+- 支持自定义邮件消息模版
+
+### BugFix
+- exporter与prometheusAgent的quota可独立设置
+- 监控项不需要部署exporter时的逻辑优化
+
+### Known Issue
+- 一个类型的prometheusAgent仅能统一设置quota，无法单独设置，不同的类型的可分别设置
+- azure相关告警规则涉及SLI及SLO，需要自定义

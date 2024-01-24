@@ -10,3 +10,13 @@
   tags:
   - prometheus
   - prometheus_secret
+
+- name: prometheus | config | customize
+  k8s:
+    kubeconfig: "{{ kubeconfig }}"
+    state: "{{ project.state }}"
+    definition: "{{ lookup('template', 'customer/configmap-customize.yml.j2') }}"
+  when: notificator.customize is defined
+  tags:
+  - prometheus
+  - prometheus_secret

@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: "{{ project.name }}-thanos-sidecar"
+  namespace: "{{ project.namespace }}"
+  labels:
+    prometheus: {{ project.name }}
+    app: thanos
+  annotations:
+{% if component.prometheus.thanos.location == "azure" %}
+    service.beta.kubernetes.io/azure-load-balancer-internal: "true"
+{% endif %}
+spec:
+  type: LoadBanlancer
+  ports:
+  - name: grpc
+    port: 1024
+    targetPort: grpc 
+  - name: http
+    port: 80
+    targetPort: http
+  selector:
+    prometheus: {{ project.name }}
+  

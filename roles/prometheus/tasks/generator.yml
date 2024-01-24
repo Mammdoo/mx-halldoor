@@ -46,6 +46,15 @@
   - generator_prometheus
   - generator_prometheus_config
 
+- name: generator | prometheus | config | customize
+  template:
+    src: customer/configmap-customize.yml.j2
+    dest: customer/config/customize.yml
+  when: notificator.customize is defined
+  tags:
+  - generator_prometheus
+  - generator_prometheus_config
+
 - name: generator | prometheus | exporter
   template:
     src: svc-exporter.yml.j2
@@ -66,10 +75,19 @@
   - generator_prometheus
   - generator_prometheus_exporter
 
-- name: generator | prometheus | operator
+- name: generator | prometheus | svc
   template:
     src: svc-prometheus.yml.j2
     dest: customer/operator/svc-prometheus.yml
+  tags:
+  - generator_prometheus
+  - generator_prometheus_operator
+
+- name: generator | prometheus | svc | thanos
+  template:
+    src: svc-thanos.yml.j2
+    dest: customer/operator/svc-thanos.yml
+  when: component.prometheus.thanos.slb is defined and component.prometheus.thanos.slb == "enable"
   tags:
   - generator_prometheus
   - generator_prometheus_operator
@@ -110,6 +128,21 @@
   - generator_prometheus
   - generator_prometheus_scrape
 
+# - name: generator | prometheus | rules | touch
+#   file:
+#     path: roles/prometheus/templates/rules/{{ item.0.name }}/{{ item.1.name }}.yml.j2
+#     state: touch
+#   with_subelements:
+#   - "{{ ScrapeMeta }}"
+#   - scrape
+#   - flags:
+#     skip_missing: True  
+#   when: monitor[item.0.name] is defined 
+#   ignore_errors: yes
+#   tags:
+#   - generator_prometheus
+#   - generator_prometheus_calc
+  
 - name: generator | prometheus | rules
   template:
     src: rules/{{ item.0.name }}/{{ item.1.name }}.yml.j2

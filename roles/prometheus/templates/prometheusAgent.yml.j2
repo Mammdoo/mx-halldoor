@@ -1,6 +1,6 @@
-{% if item.1.quota is defined %}
-{% set quota_cpu = item.1.quota.cpu %}
-{% set quota_mem = item.1.quota.mem %}
+{% if monitor[item.0.name].agent.quota is defined %}
+{% set quota_cpu = monitor[item.0.name].agent.quota.cpu %}
+{% set quota_mem = monitor[item.0.name].agent.quota.mem %}
 {% else %}
 {% set quota_cpu = "50" %}
 {% set quota_mem = "50Mi" %}

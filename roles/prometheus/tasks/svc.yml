@@ -20,3 +20,14 @@
   - prometheus
   - prometheus_svc
   - prometheus_svc_component
+
+- name: prometheus | svc | prometheus | thanos
+  k8s:
+    kubeconfig: "{{ kubeconfig }}"
+    state: "{{ project.state }}"
+    definition: "{{ lookup('template', 'svc-thanos.yml.j2') }}"
+  when: component.prometheus.thanos.slb is defined and component.prometheus.thanos.slb == "enable"
+  tags:
+  - prometheus
+  - prometheus_svc
+  - prometheus_svc_component

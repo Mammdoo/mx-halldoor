@@ -33,10 +33,42 @@ data:
     {{- end }}
     {{- if .Alerts.Resolved }}
     {{- range .Alerts }}
-    Severity: {{ "Resolved" }}
     Issue: {{ .Annotations.issue }}
 
     {{- end }}
     {{- end}}
+    {{- end }}
+{% endraw %}
+
+  email-base.tmpl: |-
+{% raw %}
+    {{ define "email_to" }}
+{% endraw %}
+    {{ '{{- $defaultGroup := "' }}{{ notificator.default | map(attribute='email') | join(',') }}{{ '" }}' }}
+{% raw %}
+    {{- $mailist := "" }}
+    {{- if .CommonLabels.cgid }}
+{% endraw %}
+{% if notificator.customerGroup is defined %}
+{% for i in notificator.customerGroup %}
+      {{ '{{- if eq .CommonLabels.cgid' }} "{{ i.id }}" {{ '}}' }}
+      {{ '{{- $mailist = "' }}{{ i.member | join(', ') }}{{ '" }}' }}
+      {{ '{{- end }}' }}
+{% endfor %}
+{%- endif %}
+    {{ '{{- else }}' }}
+{% for i in notificator.application %}
+      {{ '{{- if eq .CommonLabels.application' }} "{{ i.id }}" {{ '}}' }}
+      {{ '{{- $mailist = "' }}{{ i.owner }}{% if i.member is defined %},{{ i.member | join(', ') }}{% endif %}{{ '" }}' }}
+      {{ '{{- end }}' }}
+{% endfor %}
+    {{ '{{- end }}' }}
+
+{% raw %}
+    {{- if $mailist }}
+    {{- printf "%s,%s" $mailist $defaultGroup }}
+    {{- else }}
+    {{- $defaultGroup }}
+    {{- end }}
     {{- end }}
 {% endraw %}

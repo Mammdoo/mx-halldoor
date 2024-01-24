@@ -43,7 +43,7 @@ spec:
           port: "{{ channel.smtp.port }}"
         authUsername: "{{ channel.smtp.user }}"
         authPassword:
-          name: {{ project.name }}
+          name: {{ project.name }}-prometheus
           key: smtp.pass
         requireTLS: {% if channel.smtp.tls is defined %}{{ channel.smtp.tls }}{% else %}false{% endif %} 
 {% endif %}
@@ -55,4 +55,14 @@ spec:
     - configMap:
         name: {{ project.name }}-templates
         key: slack.tmpl
+{% endif %}
+{% if channel.smtp is defined and notificator is defined %}
+    - configMap:
+        name: {{ project.name }}-templates
+        key: email-base.tmpl
+{% endif %}
+{% if notificator.customize is defined %}
+    - configMap:
+        name: {{ project.name }}-customize
+        key: email-message.tmpl
 {% endif %}

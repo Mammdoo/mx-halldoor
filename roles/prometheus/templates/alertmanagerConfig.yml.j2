@@ -28,6 +28,12 @@ spec:
     - alert_type
   receivers:
   - name: default
+{% if channel.smtp is defined %}
+    emailConfigs:
+    - to: {% raw %}'{{ template "email_to" . }}'{% endraw %} 
+      html: {% raw %}'{{ template "email_message" . }}'{% endraw %} 
+      sendResolved: true
+{% endif %}
 {% if channel.slack is defined %}
     slackConfigs:
     - apiURL:

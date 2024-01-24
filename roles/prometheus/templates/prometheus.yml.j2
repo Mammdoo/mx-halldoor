@@ -32,7 +32,7 @@ spec:
     seccompProfile:
       type: RuntimeDefault
   retention: {{ component.prometheus.retention.duration | default('48h') }}
-  retentionSize: {{ component.prometheus.retention.size | default('1GB') }}
+  retentionSize: {{ component.prometheus.retention.size | default('15GB') }}
   ruleNamespaceSeletor: {}
   ruleSelector:
     matchLabels:
@@ -46,7 +46,14 @@ spec:
       namespace: "{{ project.namespace }}"
       apiVersion: v2
       pathPrefix: /
-{% if component.prometheus is defined %}
+{% if component.prometheus.thanos is defined and component.prometheus.thanos.store is defined %}
+  thanos:
+    blockSize: 2h
+    objectStorageConfig:
+      name: {{ project }}-prometheus
+      key: thanos.yml
+{% endif %}
+{% if component.prometheus.storageClass is defined %}
   storage:
     volumeClaimTemplate:
       spec:
