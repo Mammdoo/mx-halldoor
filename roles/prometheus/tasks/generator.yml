@@ -18,7 +18,7 @@
 - name: generator | prometheus | namespace
   template:
     src: namespace.yml.j2
-    dest: customer/namepsace.yml
+    dest: customer/namespace.yml
   tags:
   - generator_prometheus
   - generator_prometheus_namespace
