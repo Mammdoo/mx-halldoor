@@ -47,3 +47,7 @@
 - 修复exporter不存在时不需要创建svc
 - 修复tsdb窗口时间
 - 修复thanos SVC Type的问题
+
+## 0.2.0
+### Feature
+- 新增agw指标采集

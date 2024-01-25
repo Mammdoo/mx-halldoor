@@ -148,3 +148,14 @@ ScrapeMeta:
     type: agw
     metrics:
     - Throughput
+    - ApplicationGatewayTotalTime
+    - AvgRequestCountPerHealthyHost
+    - AzwafTotalRequests
+    - AzwafBotProtection
+    - BackendFirstByteResponseTime
+    - BytesReceived
+    - BytesSent
+    - CapacityUnits
+    - HealthyHostCount
+    - TotalRequests
+    - UnhealthyHostCount
