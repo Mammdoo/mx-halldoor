@@ -43,7 +43,7 @@ spec:
           port: "{{ channel.smtp.port }}"
         authUsername: "{{ channel.smtp.user }}"
         authPassword:
-          name: {{ project.name }}-prometheus
+          name: {{ project.name }}
           key: smtp.pass
         requireTLS: {% if channel.smtp.tls is defined %}{{ channel.smtp.tls }}{% else %}false{% endif %} 
 {% endif %}

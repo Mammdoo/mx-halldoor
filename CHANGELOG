@@ -36,3 +36,8 @@
 ### BugFix
 - 解决alertmanager自动发现
 - 变量使用异常修复
+
+## 0.1.3
+### BugFix
+- 修复namespace生成名错误
+- 修复secret名称错误

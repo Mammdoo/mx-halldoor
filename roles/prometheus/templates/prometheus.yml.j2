@@ -50,7 +50,7 @@ spec:
   thanos:
     blockSize: 2h
     objectStorageConfig:
-      name: {{ project.name }}-prometheus
+      name: {{ project.name }}
       key: thanos.yml
 {% endif %}
 {% if component.prometheus.storageClass is defined %}
