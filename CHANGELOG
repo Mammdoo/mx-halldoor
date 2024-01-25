@@ -41,3 +41,9 @@
 ### BugFix
 - 修复namespace生成名错误
 - 修复secret名称错误
+
+## 0.1.4
+### BugFix
+- 修复exporter不存在时不需要创建svc
+- 修复tsdb窗口时间
+- 修复thanos SVC Type的问题

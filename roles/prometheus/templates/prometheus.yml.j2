@@ -46,6 +46,8 @@ spec:
       namespace: "{{ project.namespace }}"
       apiVersion: v2
       pathPrefix: /
+  tsdb:
+    outOfOrderTimeWindow: 90m
 {% if component.prometheus.thanos is defined and component.prometheus.thanos.store is defined %}
   thanos:
     blockSize: 2h

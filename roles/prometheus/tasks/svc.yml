@@ -5,21 +5,11 @@
     state: "{{ project.state }}"
     definition: "{{ lookup('template', 'svc-exporter.yml.j2') }}"
   with_items: "{{ ScrapeMeta }}"
-  when: monitor[item.name] is defined
+  when: item.exporter is defined and monitor[item.name] is defined
   tags:
   - prometheus
   - prometheus_svc
   - prometheus_svc_exporter
-
-- name: prometheus | svc | prometheus
-  k8s:
-    kubeconfig: "{{ kubeconfig }}"
-    state: "{{ project.state }}"
-    definition: "{{ lookup('template', 'svc-prometheus.yml.j2') }}"
-  tags:
-  - prometheus
-  - prometheus_svc
-  - prometheus_svc_component
 
 - name: prometheus | svc | component
   k8s:
