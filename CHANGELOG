@@ -27,3 +27,12 @@
 ### Known Issue
 - 一个类型的prometheusAgent仅能统一设置quota，无法单独设置，不同的类型的可分别设置
 - azure相关告警规则涉及SLI及SLO，需要自定义
+
+## 0.1.1
+### BugFix
+- 变量使用异常问题修复
+
+## 0.1.2
+### BugFix
+- 解决alertmanager自动发现
+- 变量使用异常修复

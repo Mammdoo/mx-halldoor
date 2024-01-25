@@ -3,7 +3,7 @@
 {% block spec %}
   staticConfigs:
     - targets:
-      - "{{ project }}-{{ item.0.exporter.name }}"
+      - "{{ project.name }}-{{ item.0.exporter.name }}"
   metricsPath: /probe/metrics/list
   scrapeInterval: 1m
   scrapeTimeout: 40s

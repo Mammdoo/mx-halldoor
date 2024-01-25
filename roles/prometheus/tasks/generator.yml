@@ -83,6 +83,17 @@
   - generator_prometheus
   - generator_prometheus_operator
 
+- name: generator | component | svc
+  template:
+    src: svc-component.yml.j2
+    dest: customer/operator/svc-{{ item.name }}.yml
+  with_items:
+  - {"name": "alertmanager", "port": 9093}
+  - {"name": "prometheus", "port": 9090}
+  tags:
+  - generator_component
+  - generator_component_operator
+
 - name: generator | prometheus | svc | thanos
   template:
     src: svc-thanos.yml.j2
