@@ -1,15 +1,30 @@
-## 0.0.0
-### Feature
-- [add] deploy an entirely monitoring system with prometheus operator
-- [add] included github-exporter
-- Write by ansible playbook
-
-### Known Iuuse
-- demo.json without document, so you may not able to use it
-
-## 0.0.1
+## 0.2.1
 ### BugFix
--  create README, CHANGELOG
+- 修复relabel配置段不正确的问题
+
+## 0.2.0
+### Feature
+- 新增agw指标采集
+
+## 0.1.4
+### BugFix
+- 修复exporter不存在时不需要创建svc
+- 修复tsdb窗口时间
+- 修复thanos SVC Type的问题
+
+## 0.1.3
+### BugFix
+- 修复namespace生成名错误
+- 修复secret名称错误
+
+## 0.1.2
+### BugFix
+- 解决alertmanager自动发现
+- 变量使用异常修复
+
+## 0.1.1
+### BugFix
+- 变量使用异常问题修复
 
 ## 0.1.0
 ### Feature
@@ -28,26 +43,15 @@
 - 一个类型的prometheusAgent仅能统一设置quota，无法单独设置，不同的类型的可分别设置
 - azure相关告警规则涉及SLI及SLO，需要自定义
 
-## 0.1.1
+## 0.0.1
 ### BugFix
-- 变量使用异常问题修复
+-  create README, CHANGELOG
 
-## 0.1.2
-### BugFix
-- 解决alertmanager自动发现
-- 变量使用异常修复
-
-## 0.1.3
-### BugFix
-- 修复namespace生成名错误
-- 修复secret名称错误
-
-## 0.1.4
-### BugFix
-- 修复exporter不存在时不需要创建svc
-- 修复tsdb窗口时间
-- 修复thanos SVC Type的问题
-
-## 0.2.0
+## 0.0.0
 ### Feature
-- 新增agw指标采集
+- [add] deploy an entirely monitoring system with prometheus operator
+- [add] included github-exporter
+- Write by ansible playbook
+
+### Known Iuuse
+- demo.json without document, so you may not able to use it

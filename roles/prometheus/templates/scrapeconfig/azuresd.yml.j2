@@ -41,6 +41,11 @@
   - sourceLabels: ['resourceType']
     regex: "(?i){{ item.1.name }}"
     action: keep
+{% for i in monitor.azuresd.relabel %}
+  - sourceLabels: {{ i.source }}
+    regex: {{ i.regex }}
+    action: {{ i.action }}
+{% endfor %}
   metricRelabelings:
   - sourceLabels:
     - tag_prometheus
@@ -79,9 +84,4 @@
     replacement: $2
   - action: labeldrop
     regex: "tag_prometheus"
-{% for i in monitor.azuresd.relabel %}
-  - sourceLabels: {{ i.source }}
-    regex: {{ i.regex }}
-    action: {{ i.action }}
-{% endfor %}
 {% endblock %}
