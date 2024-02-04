@@ -46,7 +46,6 @@
     regex: {{ i.regex }}
     action: {{ i.action }}
 {% endfor %}
-  metricRelabelings:
   - sourceLabels:
     - tag_prometheus
     targetLabel: scrape
