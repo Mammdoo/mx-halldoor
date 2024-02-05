@@ -58,7 +58,7 @@ data:
 {%- endif %}
     {{ '{{- else }}' }}
 {% for i in notificator.application %}
-      {{ '{{- if eq .CommonLabels.application' }} "{{ i.id }}" {{ '}}' }}
+      {{ '{{- if eq (lower .CommonLabels.application)' }} "{{ i.id | lower }}" {{ '}}' }}
       {{ '{{- $mailist = "' }}{{ i.owner }}{% if i.member is defined %},{{ i.member | join(', ') }}{% endif %}{{ '" }}' }}
       {{ '{{- end }}' }}
 {% endfor %}
