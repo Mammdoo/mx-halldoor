@@ -16,6 +16,22 @@ spec:
     repeatInterval: 24h
     receiver: default
     continue: false
+    routes:
+    - matchers:
+      - name: severity
+        value: High
+        matchType: "="
+      - name: environment
+        value: "uat|dev"
+        matchType: "=~"
+      receiver: production
+      continue: true
+    - matchers:
+      - name: environment
+        value: "prod|Prod"
+        matchType: "=~"
+      receiver: production
+      continue: true
   inhibitRules:
   - targetMatch:
     - name: severity
@@ -28,12 +44,6 @@ spec:
     - alert_type
   receivers:
   - name: default
-{% if channel.smtp is defined %}
-    emailConfigs:
-    - to: {% raw %}'{{ template "email_to" . }}'{% endraw %} 
-      html: {% raw %}'{{ template "email_message" . }}'{% endraw %} 
-      sendResolved: true
-{% endif %}
 {% if channel.slack is defined %}
     slackConfigs:
     - apiURL:
@@ -42,4 +52,11 @@ spec:
       channel: "{{ channel.slack.channel }}"
       sendResolved: true
       text: {% raw %}'{{ template "slack.default.text" . }}'{% endraw %} 
+{% endif %}
+  - name: production
+{% if channel.smtp is defined %}
+    emailConfigs:
+    - to: {% raw %}'{{ template "email_to" . }}'{% endraw %} 
+      html: {% raw %}'{{ template "email_message" . }}'{% endraw %} 
+      sendResolved: true
 {% endif %}
