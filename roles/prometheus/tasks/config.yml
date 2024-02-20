@@ -9,7 +9,7 @@
   - template
   tags:
   - prometheus
-  - prometheus_secret
+  - prometheus_config
 
 - name: prometheus | config | customize
   k8s:
@@ -19,4 +19,4 @@
   when: notificator.customize is defined
   tags:
   - prometheus
-  - prometheus_secret
+  - prometheus_config
