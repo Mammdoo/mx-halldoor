@@ -10,7 +10,7 @@
     tenantID: {{ monitor.azure.app.tenantid }}
     clientID: {{ monitor.azure.app.clientid }}
     clientSecret:
-      name: {{ project.name }}-prometheus
+      name: {{ project.name }}
       key: azure-app-clientkey
     refreshInterval: 24h
 {% endfor %}
