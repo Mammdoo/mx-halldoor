@@ -1,3 +1,28 @@
+## 0.3.0
+### Feature
+- 增加tag解析字段，新增global-running字段，用于临时告警抑制，将global-alert定义为永久告警抑制，双标签控制不同场景下的告警抑制行为
+- 更新告警联系人渠道的name，由production改为dynamic，明确本联系人渠道是动态配置的。
+
+## 0；.2.6
+### BugFix
+- 修复使用错误的azure client secret位置
+
+## 0.2.5
+### BugFix
+- 修复cgid邮件列表为空时，降级使用application邮件列表查找
+
+## 0.2.4
+### BugFix
+- 修复application在查找告警联系人时忽略大小写的问题
+
+## 0.2.3
+### BugFix
+- 修复application在查找告警联系人时忽略大小写的问题
+
+## 0.2.2
+### BugFix
+- 修复vm的relabel，删除metricsRelabing配置
+
 ## 0.2.1
 ### BugFix
 - 修复relabel配置段不正确的问题

@@ -58,6 +58,11 @@
     replacement: $2
   - sourceLabels:
     - tag_prometheus
+    targetLabel: shouldRunning
+    regex: "(.*)global-running=(.*?);(.*)"
+    replacement: $2
+  - sourceLabels:
+    - tag_prometheus
     targetLabel: hasCustomize
     regex: "(.*)global-customize=(.*?);(.*)"
     replacement: $2

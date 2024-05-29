@@ -24,14 +24,12 @@ spec:
       - name: environment
         value: "uat|dev"
         matchType: "=~"
-      receiver: production
-      continue: true
+      receiver: dynamic
     - matchers:
       - name: environment
         value: "prod|Prod"
         matchType: "=~"
-      receiver: production
-      continue: true
+      receiver: dynamic
   inhibitRules:
   - targetMatch:
     - name: severity
@@ -53,7 +51,7 @@ spec:
       sendResolved: true
       text: {% raw %}'{{ template "slack.default.text" . }}'{% endraw %} 
 {% endif %}
-  - name: production
+  - name: dynamic
 {% if channel.smtp is defined %}
     emailConfigs:
     - to: {% raw %}'{{ template "email_to" . }}'{% endraw %} 
