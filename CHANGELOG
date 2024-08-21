@@ -1,3 +1,7 @@
+## 0.4.0
+### Feature
+- 新增支持配置私有registry
+
 ## 0.3.0
 ### Feature
 - 增加tag解析字段，新增global-running字段，用于临时告警抑制，将global-alert定义为永久告警抑制，双标签控制不同场景下的告警抑制行为
